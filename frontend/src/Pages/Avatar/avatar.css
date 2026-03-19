@@ -1,24 +1,93 @@
-.containerBox{
-    height: 100%;
+/* Theme Colors */
+:root{
+    --primary:#FF725E;
+    --primary-dark:#e95f4b;
 }
 
-.avatarBox{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    flex-direction: column;
-
+/* Page Background */
+.avatarPage{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#f5f6fa;
 }
 
+/* Card (same as login/signup) */
+.avatarCard{
+    width:100%;
+    max-width:400px;
+    background:white;
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:0 15px 40px rgba(0,0,0,0.1);
+}
+
+/* Top Section */
+.avatarTop{
+    background:linear-gradient(135deg,#FF725E,#ff9a8b);
+    padding:30px;
+    text-align:center;
+    color:white;
+}
+
+.avatarTop h1{
+    font-size:22px;
+}
+
+/* Bottom Section */
+.avatarBottom{
+    padding:25px;
+    text-align:center;
+}
+
+/* Avatar List */
+.avatarContainer{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+/* Avatar Image */
+.avatar{
+    border-radius:50%;
+    padding:5px;
+    border:2px solid transparent;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.avatar img{
+    width:60px;
+    height:60px;
+}
+
+/* Hover Effect */
 .avatar:hover{
-    border: 0.4rem solid blueviolet;
-
-    transition: 0.5s ease-in-out;
-    cursor: pointer;
+    transform:scale(1.1);
+    border-color:var(--primary);
 }
 
+/* Selected Avatar */
 .selected{
-    border: 0.4rem solid blueviolet !important; 
+    border-color:var(--primary);
+    box-shadow:0 0 10px rgba(255,114,94,0.5);
 }
 
+/* Button (same as login) */
+.primaryBtn{
+    width:100%;
+    background:var(--primary);
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    color:white;
+    font-weight:600;
+    margin-top:10px;
+    transition:0.3s;
+}
+
+.primaryBtn:hover{
+    background:var(--primary-dark);
+}
