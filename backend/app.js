@@ -7,16 +7,13 @@ import helmet from "helmet";
 import morgan from "morgan";
 import transactionRoutes from "./Routers/Transactions.js";
 import userRoutes from "./Routers/userRouter.js";
-import path from "path";
 
 dotenv.config({ path: "./config/config.env" });
-const app = express();
 
+const app = express();
 const port = process.env.PORT;
 
 connectDB();
-
-
 
 // Middleware
 app.use(express.json());
@@ -34,3 +31,16 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// ✅ ADD THESE TWO LINES
+app.use("/api/auth", userRoutes);
+app.use("/api/v1", transactionRoutes);
+
+// Test route
+app.get("/", (req, res) => {
+  res.send("Backend running 🚀");
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
