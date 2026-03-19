@@ -16,35 +16,21 @@ const port = process.env.PORT;
 
 connectDB();
 
-const allowedOrigins = [
-  "https://main.d1sj7cd70hlter.amplifyapp.com",
-  "https://expense-tracker-app-three-beryl.vercel.app",
-  // add more origins as needed
-];
+
 
 // Middleware
 app.use(express.json());
+
 app.use(
   cors({
-    origin: allowedOrigins,
-    credentials: true,
+    origin: "https://expense-frontend-kiq0.onrender.com",
     methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
+
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-// Router
-app.use("/api/v1", transactionRoutes);
-app.use("/api/auth", userRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(port, () => {
-  console.log(`Server is listening on http://localhost:${port}`);
-});
