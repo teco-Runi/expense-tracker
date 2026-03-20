@@ -1,138 +1,61 @@
-import User from "../models/UserSchema.js";
-import bcrypt from "bcrypt";
+import User from "../models/User.js"; // your Mongoose user model
+import bcrypt from "bcryptjs";
 
-export const registerControllers = async (req, res, next) => {
-    try{
-        const {name, email, password} = req.body;
+// REGISTER CONTROLLER
+export const registerControllers = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-        // console.log(name, email, password);
+    // Validation
+    if (!name || !email || !password)
+      return res.status(400).json({ success: false, message: "All fields are required" });
 
-        if(!name || !email || !password){
-            return res.status(400).json({
-                success: false,
-                message: "Please enter All Fields",
-            }) 
-        }
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser)
+      return res.status(400).json({ success: false, message: "Email already exists" });
 
-        let user = await User.findOne({email});
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-        if(user){
-            return res.status(409).json({
-                success: false,
-                message: "User already Exists",
-            });
-        }
+    // Create user
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
-        const salt = await bcrypt.genSalt(10);
+    const userToReturn = { ...newUser._doc };
+    delete userToReturn.password;
 
-        const hashedPassword = await bcrypt.hash(password, salt);
+    res.status(201).json({ success: true, message: "User registered successfully", user: userToReturn });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
-        // console.log(hashedPassword);
+// LOGIN CONTROLLER
+export const loginControllers = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        let newUser = await User.create({
-            name, 
-            email, 
-            password: hashedPassword, 
-        });
+    if (!email || !password)
+      return res.status(400).json({ success: false, message: "All fields are required" });
 
-        return res.status(200).json({
-            success: true,
-            message: "User Created Successfully",
-            user: newUser
-        });
-    }
-    catch(err){
-        return res.status(500).json({
-            success: false,
-            message: err.message,
-        });
-    }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ success: false, message: "Invalid credentials" });
 
-}
-export const loginControllers = async (req, res, next) => {
-    try{
-        const { email, password } = req.body;
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ success: false, message: "Invalid credentials" });
 
-        // console.log(email, password);
-  
-        if (!email || !password){
-            return res.status(400).json({
-                success: false,
-                message: "Please enter All Fields",
-            }); 
-        }
-    
-        const user = await User.findOne({ email });
-    
-        if (!user){
-            return res.status(401).json({
-                success: false,
-                message: "User not found",
-            }); 
-        }
-    
-        const isMatch = await bcrypt.compare(password, user.password);
-    
-        if (!isMatch){
-            return res.status(401).json({
-                success: false,
-                message: "Incorrect Email or Password",
-            }); 
-        }
+    const userToReturn = { ...user._doc };
+    delete userToReturn.password;
 
-        delete user.password;
-
-        return res.status(200).json({
-            success: true,
-            message: `Welcome back, ${user.name}`,
-            user,
-        });
-
-    }
-    catch(err){
-        return res.status(500).json({
-            success: false,
-            message: err.message,
-        });
-    }
-}
-
-export const setAvatarController = async (req, res, next)=> {
-    try{
-
-        const userId = req.params.id;
-       
-        const imageData = req.body.image;
-      
-        const userData = await User.findByIdAndUpdate(userId, {
-            isAvatarImageSet: true,
-            avatarImage: imageData,
-        },
-        { new: true });
-
-        return res.status(200).json({
-            isSet: userData.isAvatarImageSet,
-            image: userData.avatarImage,
-          });
-
-
-    }catch(err){
-        next(err);
-    }
-}
-
-export const allUsers = async (req, res, next) => {
-    try{
-        const user = await User.find({_id: {$ne: req.params.id}}).select([
-            "email",
-            "username",
-            "avatarImage",
-            "_id",
-        ]);
-
-        return res.json(user);
-    }
-    catch(err){
-        next(err);
-    }
-}
+    res.status(200).json({ success: true, message: "Login successful", user: userToReturn });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
