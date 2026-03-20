@@ -1,88 +1,58 @@
-// NavbarComponent.js
-import React, { useCallback, useEffect, useState } from 'react';
-import { Navbar, Nav, Button } from 'react-bootstrap';
+import { useEffect, useState } from "react";
+import { Navbar, Nav, Button, Container } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/expensely-logo.svg";
 import "./style.css";
-import logo from "../../assets/expensely-logo.svg";
-import { useNavigate } from 'react-router-dom';
+
 const Header = () => {
-  
-const navigate = useNavigate();
-
-  const handleShowLogin = () =>{
-    navigate("/login");
-  }
-
-  const [user, setUser] = useState();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    
-      if (localStorage.getItem("user")) {
-        const user = JSON.parse(localStorage.getItem("user"));
-        
-        setUser(user);
-        
-      }
-
-
-    
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
-  const handleShowLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
-  }
+  };
 
   return (
-    <>
-    <div style={{ position: 'relative', overflow: 'hidden' }}>
-    <Navbar className="navbarCSS" collapseOnSelect expand="lg" style={{position: 'relative', zIndex: "2 !important"}}>
-      {/* <Navbar className="navbarCSS" collapseOnSelect expand="lg" bg="dark" variant="dark"> */}
-      <img
-      src={logo}
-      alt="ExpenseLy Logo"
-      style={{
-      width:"60px",
-      height:"60px",
-      marginBottom:"8px"
-      }}
-      />
-        <Navbar.Brand href="/" className="text-white navTitle">ExpenseLy</Navbar.Brand>
-        <Navbar.Toggle
-            aria-controls="basic-navbar-nav"
-            style={{
-              backgroundColor: "transparent",
-              borderColor: "transparent",
-            }}
-          >
-            <span
-              className="navbar-toggler-icon"
-              style={{
-                background: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e")`,
-              }}
-            ></span>
-          </Navbar.Toggle>
-        <div>
-        <Navbar.Collapse id="responsive-navbar-nav" style={{color: "white"}}>
-          {user ? (
-            <>
-            <Nav>
-                <Button variant="primary" onClick={handleShowLogout} className="ml-2">Logout</Button>
-              </Nav>
-            </>
-          ) : (
+    <Navbar expand="lg" className="navbarCustom">
+      <Container>
 
-            <>
-              <Nav>
-                <Button variant="primary" onClick={handleShowLogin} className="ml-2">Login</Button>
-              </Nav>
-            </>
-          )}
-          
+        {/* 🔷 Logo + Brand */}
+        <Navbar.Brand
+          onClick={() => navigate("/")}
+          className="brandContainer"
+        >
+          <img src={logo} alt="logo" />
+          <span>ExpenseLy</span>
+        </Navbar.Brand>
+
+        <Navbar.Toggle />
+
+        <Navbar.Collapse className="justify-content-end">
+          <Nav>
+
+            {user ? (
+              <Button className="navBtn" onClick={handleLogout}>
+                Logout
+              </Button>
+            ) : (
+              <Button className="navBtn" onClick={() => navigate("/login")}>
+                Login
+              </Button>
+            )}
+
+          </Nav>
         </Navbar.Collapse>
-      </div>
-      </Navbar>
-      </div>
-    </>
+
+      </Container>
+    </Navbar>
   );
 };
 
