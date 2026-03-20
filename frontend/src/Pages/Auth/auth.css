@@ -16,6 +16,8 @@
 
 /* 💳 Card */
 .appCard {
+  width: 100%;
+  max-width: 420px;   /* 👈 increase from default */
   border-radius: 25px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.9);
@@ -64,11 +66,12 @@
 
 /* 🔳 Bottom */
 .cardBottom {
-  padding: 25px;
+  padding: 30px;   /* 👈 increase spacing */
 }
 
 /* Inputs */
 .inputField {
+  width: 100%;   /* 👈 ensure full width */
   margin-bottom: 15px;
   border-radius: 12px !important;
   padding: 12px !important;
@@ -111,6 +114,11 @@
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .appCard {
+    max-width: 90%;
+  }
+}
 @media (max-width: 768px) {
   .cardBottom {
     padding: 20px;
