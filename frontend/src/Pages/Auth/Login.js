@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
@@ -12,7 +12,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -34,21 +33,12 @@ const Login = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const validateForm = () => {
-    const { email, password } = values;
-
-    if (!email || !password) {
-      toast.error("All fields are required", toastOptions);
-      return false;
-    }
-
-    return true;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!values.email || !values.password) {
+      return toast.error("All fields are required", toastOptions);
+    }
 
     try {
       setLoading(true);
@@ -62,8 +52,9 @@ const Login = () => {
       } else {
         toast.error(data.message, toastOptions);
       }
+
     } catch (error) {
-      toast.error("Server error, try again later", toastOptions);
+      toast.error("Server error", toastOptions);
     }
 
     setLoading(false);
@@ -71,74 +62,64 @@ const Login = () => {
 
   return (
     <div className="authPage">
-      <Container>
-        <Row className="justify-content-center">
-          <Col lg={4} md={6} sm={10} xs={11}>
+      <div className="centerWrapper">
 
-            <div className="appCard">
+        <div className="appCard">
 
-              {/* 🔶 Top */}
-              <div className="cardTop">
-                <div className="brandRow">
-                  <img src={logo} alt="ExpenseLy Logo" />
-                  <h4>ExpenseLy</h4>
-                </div>
-                <p className="tagline">Track your expenses easily</p>
-              </div>
-
-              {/* 🔳 Bottom */}
-              <div className="cardBottom">
-
-                <h5 className="text-center mb-3">Welcome Back</h5>
-
-                <Form onSubmit={handleSubmit}>
-
-                  <Form.Control
-                    className="inputField"
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    value={values.email}
-                    onChange={handleChange}
-                  />
-
-                  <Form.Control
-                    className="inputField"
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={values.password}
-                    onChange={handleChange}
-                  />
-
-                  <Button
-                    type="submit"
-                    className="primaryBtn"
-                    disabled={loading}
-                  >
-                    {loading ? "Logging in..." : "Login"}
-                  </Button>
-
-                </Form>
-
-                <p className="text-center mt-3">
-                  <Link to="/forgotPassword" className="lnk">
-                    Forgot Password?
-                  </Link>
-                </p>
-
-                <p className="text-center">
-                  Don't have an account?
-                  <Link to="/register" className="lnk"> Register</Link>
-                </p>
-
-              </div>
-
+          <div className="cardTop">
+            <div className="brandRow">
+              <img src={logo} alt="logo" />
+              <h4>ExpenseLy</h4>
             </div>
+            <p className="tagline">Track your expenses easily</p>
+          </div>
 
-          </Col>
-        </Row>
-      </Container>
+          <div className="cardBottom">
+
+            <h5 className="text-center mb-3">Welcome Back</h5>
+
+            <Form onSubmit={handleSubmit}>
+
+              <Form.Control
+                className="inputField"
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={values.email}
+                onChange={handleChange}
+              />
+
+              <Form.Control
+                className="inputField"
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={values.password}
+                onChange={handleChange}
+              />
+
+              <Button className="primaryBtn" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+              </Button>
+
+            </Form>
+
+            <p className="text-center mt-3">
+              <Link to="/forgotPassword" className="lnk">
+                Forgot Password?
+              </Link>
+            </p>
+
+            <p className="text-center">
+              Don't have an account?
+              <Link to="/register" className="lnk"> Register</Link>
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
 
       <ToastContainer />
     </div>

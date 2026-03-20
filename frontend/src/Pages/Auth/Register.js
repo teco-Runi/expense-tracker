@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
@@ -12,7 +12,6 @@ const Register = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -35,26 +34,16 @@ const Register = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const validateForm = () => {
-    const { name, email, password } = values;
-
-    if (!name || !email || !password) {
-      toast.error("All fields are required", toastOptions);
-      return false;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters", toastOptions);
-      return false;
-    }
-
-    return true;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!values.name || !values.email || !values.password) {
+      return toast.error("All fields are required", toastOptions);
+    }
+
+    if (values.password.length < 6) {
+      return toast.error("Password must be at least 6 characters", toastOptions);
+    }
 
     try {
       setLoading(true);
@@ -64,14 +53,14 @@ const Register = () => {
       if (data.success) {
         delete data.user.password;
         localStorage.setItem("user", JSON.stringify(data.user));
-
         toast.success(data.message, toastOptions);
         navigate("/");
       } else {
         toast.error(data.message, toastOptions);
       }
+
     } catch (error) {
-      toast.error("Server error, try again later", toastOptions);
+      toast.error("Server error", toastOptions);
     }
 
     setLoading(false);
@@ -79,77 +68,67 @@ const Register = () => {
 
   return (
     <div className="authPage">
-      <Container>
-        <Row className="justify-content-center">
-          <Col lg={4} md={6} sm={10} xs={11}>
-            
-            <div className="appCard">
+      <div className="centerWrapper">
 
-              {/* 🔶 Top */}
-              <div className="cardTop">
-                <div className="brandRow">
-                  <img src={logo} alt="ExpenseLy Logo" />
-                  <h4>ExpenseLy</h4>
-                </div>
-                <p className="tagline">Track your expenses easily</p>
-              </div>
+        <div className="appCard">
 
-              {/* 🔳 Bottom */}
-              <div className="cardBottom">
-
-                <h5 className="text-center mb-3">Create Account</h5>
-
-                <Form onSubmit={handleSubmit}>
-
-                  <Form.Control
-                    className="inputField"
-                    type="text"
-                    name="name"
-                    placeholder="Full Name"
-                    value={values.name}
-                    onChange={handleChange}
-                  />
-
-                  <Form.Control
-                    className="inputField"
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    value={values.email}
-                    onChange={handleChange}
-                  />
-
-                  <Form.Control
-                    className="inputField"
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={values.password}
-                    onChange={handleChange}
-                  />
-
-                  <Button
-                    type="submit"
-                    className="primaryBtn"
-                    disabled={loading}
-                  >
-                    {loading ? "Creating Account..." : "Sign Up"}
-                  </Button>
-
-                </Form>
-
-                <p className="text-center mt-3">
-                  Already have an account?
-                  <Link to="/login" className="lnk"> Login</Link>
-                </p>
-
-              </div>
-
+          <div className="cardTop">
+            <div className="brandRow">
+              <img src={logo} alt="logo" />
+              <h4>ExpenseLy</h4>
             </div>
+            <p className="tagline">Track your expenses easily</p>
+          </div>
 
-          </Col>
-        </Row>
-      </Container>
+          <div className="cardBottom">
+
+            <h5 className="text-center mb-3">Create Account</h5>
+
+            <Form onSubmit={handleSubmit}>
+
+              <Form.Control
+                className="inputField"
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                value={values.name}
+                onChange={handleChange}
+              />
+
+              <Form.Control
+                className="inputField"
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={values.email}
+                onChange={handleChange}
+              />
+
+              <Form.Control
+                className="inputField"
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={values.password}
+                onChange={handleChange}
+              />
+
+              <Button className="primaryBtn" disabled={loading}>
+                {loading ? "Creating..." : "Sign Up"}
+              </Button>
+
+            </Form>
+
+            <p className="text-center mt-3">
+              Already have an account?
+              <Link to="/login" className="lnk"> Login</Link>
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
 
       <ToastContainer />
     </div>
