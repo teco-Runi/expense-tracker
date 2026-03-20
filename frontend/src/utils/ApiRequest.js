@@ -1,8 +1,8 @@
-const host = "https://expense-backend-2k8h.onrender.com";
-// const host = "http://localhost:5000";
-export const setAvatarAPI = `${host}/api/auth/setAvatar`;
+const host = process.env.REACT_APP_BACKEND_URL;
+
 export const registerAPI = `${host}/api/auth/register`;
 export const loginAPI = `${host}/api/auth/login`;
+export const setAvatarAPI = `${host}/api/auth/setAvatar`;
 export const addTransaction = `${host}/api/v1/addTransaction`;
 export const getTransactions = `${host}/api/v1/getTransaction`;
 export const editTransactions = `${host}/api/v1/updateTransaction`;

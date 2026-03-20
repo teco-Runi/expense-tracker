@@ -10,25 +10,14 @@ import "./auth.css";
 
 const Register = () => {
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(false);
-  const [values, setValues] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [values, setValues] = useState({ name: "", email: "", password: "" });
 
   useEffect(() => {
-    if (localStorage.getItem("user")) {
-      navigate("/");
-    }
+    if (localStorage.getItem("user")) navigate("/"); // redirect if already logged in
   }, [navigate]);
 
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 2000,
-    theme: "dark",
-  };
+  const toastOptions = { position: "bottom-right", autoClose: 2000, theme: "dark" };
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -47,34 +36,27 @@ const Register = () => {
 
     try {
       setLoading(true);
-
-      const { data } = await axios.post(
-  "https://expense-backend-2k8h.onrender.com/api/auth/register",
-  values
-);
+      const { data } = await axios.post(registerAPI, values);
 
       if (data.success) {
-        delete data.user.password;
+        delete data.user.password; // remove password from localStorage
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success(data.message, toastOptions);
-        navigate("/");
+        navigate("/"); // redirect to homepage
       } else {
         toast.error(data.message, toastOptions);
       }
-
     } catch (error) {
       toast.error("Server error", toastOptions);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="authPage">
       <div className="centerWrapper">
-
         <div className="appCard">
-
           <div className="cardTop">
             <div className="brandRow">
               <img src={logo} alt="logo" />
@@ -82,13 +64,9 @@ const Register = () => {
             </div>
             <p className="tagline">Track your expenses easily</p>
           </div>
-
           <div className="cardBottom">
-
             <h5 className="text-center mb-3">Create Account</h5>
-
             <Form onSubmit={handleSubmit}>
-
               <Form.Control
                 className="inputField"
                 type="text"
@@ -97,7 +75,6 @@ const Register = () => {
                 value={values.name}
                 onChange={handleChange}
               />
-
               <Form.Control
                 className="inputField"
                 type="email"
@@ -106,7 +83,6 @@ const Register = () => {
                 value={values.email}
                 onChange={handleChange}
               />
-
               <Form.Control
                 className="inputField"
                 type="password"
@@ -115,24 +91,16 @@ const Register = () => {
                 value={values.password}
                 onChange={handleChange}
               />
-
               <Button className="primaryBtn" disabled={loading}>
                 {loading ? "Creating..." : "Sign Up"}
               </Button>
-
             </Form>
-
             <p className="text-center mt-3">
-              Already have an account?
-              <Link to="/login" className="lnk"> Login</Link>
+              Already have an account? <Link to="/login" className="lnk">Login</Link>
             </p>
-
           </div>
-
         </div>
-
       </div>
-
       <ToastContainer />
     </div>
   );
