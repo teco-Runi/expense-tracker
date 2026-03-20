@@ -1,14 +1,118 @@
-.appCard {
-  animation: fadeIn 0.5s ease;
+/* 🌈 Theme */
+:root {
+  --primary: #ff725e;
+  --primary-dark: #e85c4a;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+/* 🌍 Page */
+.authPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fdfbfb, #ebedee);
+  font-family: "Poppins", sans-serif;
+}
+
+/* 💳 Card */
+.appCard {
+  border-radius: 25px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.appCard:hover {
+  transform: translateY(-5px);
+}
+
+/* 🔶 Top */
+.cardTop {
+  background: linear-gradient(135deg, var(--primary), #ff9a8b);
+  padding: 25px;
+  text-align: center;
+  color: white;
+}
+
+/* Logo Row */
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.brandRow img {
+  width: 45px;
+  height: 45px;
+}
+
+.brandRow h4 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Tagline */
+.tagline {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-top: 5px;
+}
+
+/* 🔳 Bottom */
+.cardBottom {
+  padding: 25px;
+}
+
+/* Inputs */
+.inputField {
+  margin-bottom: 15px;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  border: 1px solid #e5e7eb !important;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.inputField:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(255, 114, 94, 0.2) !important;
+}
+
+/* Button */
+.primaryBtn {
+  width: 100%;
+  border-radius: 12px !important;
+  padding: 12px;
+  font-weight: 600;
+  border: none !important;
+  background: linear-gradient(135deg, var(--primary), #ff9a8b) !important;
+  transition: 0.3s;
+}
+
+.primaryBtn:hover {
+  transform: scale(1.03);
+  background: linear-gradient(135deg, var(--primary-dark), #ff7f73) !important;
+}
+
+/* Links */
+.lnk {
+  color: var(--primary);
+  text-decoration: none;
+  margin-left: 5px;
+  font-weight: 500;
+}
+
+.lnk:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cardBottom {
+    padding: 20px;
   }
 }
