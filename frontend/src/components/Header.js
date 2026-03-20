@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import "./style.css";
+import logo from "../../assets/expensely-logo.svg";
 import { useNavigate } from 'react-router-dom';
 const Header = () => {
   
@@ -36,7 +37,16 @@ const navigate = useNavigate();
     <div style={{ position: 'relative', overflow: 'hidden' }}>
     <Navbar className="navbarCSS" collapseOnSelect expand="lg" style={{position: 'relative', zIndex: "2 !important"}}>
       {/* <Navbar className="navbarCSS" collapseOnSelect expand="lg" bg="dark" variant="dark"> */}
-        <Navbar.Brand href="/" className="text-white navTitle">Expense Management System</Navbar.Brand>
+      <img
+      src={logo}
+      alt="ExpenseLy Logo"
+      style={{
+      width:"60px",
+      height:"60px",
+      marginBottom:"8px"
+      }}
+      />
+        <Navbar.Brand href="/" className="text-white navTitle">ExpenseLy</Navbar.Brand>
         <Navbar.Toggle
             aria-controls="basic-navbar-nav"
             style={{

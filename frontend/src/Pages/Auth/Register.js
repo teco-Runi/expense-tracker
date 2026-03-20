@@ -1,188 +1,159 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "./auth.css";
 import axios from "axios";
 import logo from "../../assets/expensely-logo.svg";
 import { registerAPI } from "../../utils/ApiRequest";
+import "react-toastify/dist/ReactToastify.css";
+import "./auth.css";
 
 const Register = () => {
+  const navigate = useNavigate();
 
-const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-const [loading,setLoading] = useState(false);
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-const [values,setValues] = useState({
-name:"",
-email:"",
-password:""
-});
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
-useEffect(()=>{
-if(localStorage.getItem("user")){
-navigate("/")
-}
-},[navigate])
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 2000,
+    theme: "dark",
+  };
 
-const toastOptions = {
-position:"bottom-right",
-autoClose:2000,
-theme:"dark"
-}
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
 
-const handleChange = (e)=>{
-setValues({...values,[e.target.name]:e.target.value})
-}
+  const validateForm = () => {
+    const { name, email, password } = values;
 
-const handleSubmit = async(e)=>{
+    if (!name || !email || !password) {
+      toast.error("All fields are required", toastOptions);
+      return false;
+    }
 
-e.preventDefault()
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters", toastOptions);
+      return false;
+    }
 
-try{
+    return true;
+  };
 
-setLoading(true)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-const {data} = await axios.post(registerAPI,{
-name:values.name,
-email:values.email,
-password:values.password
-})
+    if (!validateForm()) return;
 
-if(data.success){
+    try {
+      setLoading(true);
 
-delete data.user.password
-localStorage.setItem("user",JSON.stringify(data.user))
+      const { data } = await axios.post(registerAPI, values);
 
-toast.success(data.message,toastOptions)
+      if (data.success) {
+        delete data.user.password;
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-navigate("/")
+        toast.success(data.message, toastOptions);
+        navigate("/");
+      } else {
+        toast.error(data.message, toastOptions);
+      }
+    } catch (error) {
+      toast.error("Server error, try again later", toastOptions);
+    }
 
-}else{
+    setLoading(false);
+  };
 
-toast.error(data.message,toastOptions)
+  return (
+    <div className="authPage">
+      <Container>
+        <Row className="justify-content-center">
+          <Col lg={4} md={6} sm={10} xs={11}>
+            
+            <div className="appCard">
 
-}
+              {/* 🔶 Top */}
+              <div className="cardTop">
+                <div className="brandRow">
+                  <img src={logo} alt="ExpenseLy Logo" />
+                  <h4>ExpenseLy</h4>
+                </div>
+                <p className="tagline">Track your expenses easily</p>
+              </div>
 
-}catch(error){
+              {/* 🔳 Bottom */}
+              <div className="cardBottom">
 
-toast.error("Something went wrong",toastOptions)
+                <h5 className="text-center mb-3">Create Account</h5>
 
-}
+                <Form onSubmit={handleSubmit}>
 
-setLoading(false)
+                  <Form.Control
+                    className="inputField"
+                    type="text"
+                    name="name"
+                    placeholder="Full Name"
+                    value={values.name}
+                    onChange={handleChange}
+                  />
 
-}
+                  <Form.Control
+                    className="inputField"
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={values.email}
+                    onChange={handleChange}
+                  />
 
+                  <Form.Control
+                    className="inputField"
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={values.password}
+                    onChange={handleChange}
+                  />
 
-return(
+                  <Button
+                    type="submit"
+                    className="primaryBtn"
+                    disabled={loading}
+                  >
+                    {loading ? "Creating Account..." : "Sign Up"}
+                  </Button>
 
-<div
-style={{
-minHeight:"100vh",
-background:`
-radial-gradient(circle at center, rgba(255,114,94,0.12) 0%, rgba(255,114,94,0.06) 20%, transparent 40%),
-linear-gradient(135deg,#ffffff,#fdfdfd)
-`,
-display:"flex",
-alignItems:"center",
-justifyContent:"center"
-}}
->
+                </Form>
 
-<Container className="d-flex justify-content-center">
+                <p className="text-center mt-3">
+                  Already have an account?
+                  <Link to="/login" className="lnk"> Login</Link>
+                </p>
 
-<Row className="w-100 justify-content-center">
+              </div>
 
-<Col lg={4} md={6} sm={10} xs={11}>
+            </div>
 
-<div className="appCard">
+          </Col>
+        </Row>
+      </Container>
 
-<div className="cardTop">
+      <ToastContainer />
+    </div>
+  );
+};
 
-<img
-src={logo}
-alt="ExpenseLy Logo"
-style={{
-width:"60px",
-height:"60px",
-marginBottom:"8px"
-}}
-/>
-<h4 className="mt-2 text-white">ExpenseLy</h4>
-<p style={{fontSize:"13px",opacity:"0.9"}}>
-Track your expenses easily
-</p>
-</div>
-
-<div className="cardBottom">
-
-<h5 className="text-center mb-3">Sign Up</h5>
-
-<Form onSubmit={handleSubmit}>
-
-<Form.Control
-className="inputField"
-type="text"
-name="name"
-placeholder="Full Name"
-value={values.name}
-onChange={handleChange}
-/>
-
-<Form.Control
-className="inputField"
-type="email"
-name="email"
-placeholder="Email"
-value={values.email}
-onChange={handleChange}
-/>
-
-<Form.Control
-className="inputField"
-type="password"
-name="password"
-placeholder="Password"
-value={values.password}
-onChange={handleChange}
-/>
-
-<Button
-type="submit"
-className="primaryBtn"
-disabled={loading}
->
-
-{loading ? "Registering..." : "Sign Up"}
-
-</Button>
-
-</Form>
-
-<p className="text-center mt-3">
-
-Already have an account?
-
-<Link to="/login" className="lnk"> Login</Link>
-
-</p>
-
-</div>
-
-</div>
-
-</Col>
-
-</Row>
-
-</Container>
-
-</div>
-
-)
-
-}
-
-export default Register
+export default Register;
