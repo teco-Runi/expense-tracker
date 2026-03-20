@@ -1,68 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import spinner from "../../assets/gg.gif";
 import "./avatar.css";
 import { Button } from "react-bootstrap";
 import { setAvatarAPI } from "../../utils/ApiRequest.js";
 
-const {
-  uniqueNamesGenerator,
-  colors,
-  animals,
-  countries,
-  names,
-  languages,
-} = require("unique-names-generator");
-
 const SetAvatar = () => {
   const navigate = useNavigate();
-
-  const sprites = [
-    "adventurer", "micah", "avataaars", "bottts", "initials",
-    "adventurer-neutral", "big-ears", "big-ears-neutral",
-    "big-smile", "croodles", "identicon", "miniavs",
-    "open-peeps", "personas", "pixel-art", "pixel-art-neutral"
-  ];
 
   const toastOptions = { position: "bottom-right", autoClose: 2000, theme: "dark" };
 
   const [selectedAvatar, setSelectedAvatar] = useState(undefined);
-  const [loading, setLoading] = useState(false);
-  const [selectedSprite, setSelectedSprite] = useState(sprites[0]);
 
-  const randomName = () =>
-    uniqueNamesGenerator({
-      dictionaries: [animals, colors, countries, names, languages],
-      length: 2
-    });
+  // ✅ 9 FIXED avatars (male, female, neutral)
+  const avatars = [
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=male1",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=male2",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=male3",
 
-  const [imgURL, setImgURL] = useState(
-    Array(4).fill(0).map(() =>
-      `https://api.dicebear.com/7.x/${sprites[0]}/svg?seed=${randomName()}`
-    )
-  );
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=female1",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=female2",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=female3",
+
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=neutral1",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=neutral2",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=neutral3",
+  ];
 
   useEffect(() => {
     if (!localStorage.getItem("user")) navigate("/login");
   }, [navigate]);
 
-  const handleSpriteChange = (e) => {
-    const sprite = e.target.value;
-    setSelectedSprite(sprite);
-    setLoading(true);
-
-    const newImgs = Array(4).fill(0).map(() =>
-      `https://api.dicebear.com/7.x/${sprite}/svg?seed=${randomName()}`
-    );
-
-    setImgURL(newImgs);
-    setLoading(false);
-  };
-
-  // ✅ FIXED FUNCTION (IMPORTANT CHANGE HERE)
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
       toast.error("Please select an avatar", toastOptions);
@@ -73,8 +42,8 @@ const SetAvatar = () => {
 
     try {
       const { data } = await axios.post(setAvatarAPI, {
-        userId: user._id,   // ✅ send id in body
-        image: imgURL[selectedAvatar],
+        userId: user._id,
+        image: avatars[selectedAvatar],
       });
 
       if (data.isSet) {
@@ -86,10 +55,10 @@ const SetAvatar = () => {
 
         navigate("/");
       } else {
-        toast.error("Error setting avatar, try again", toastOptions);
+        toast.error("Error setting avatar", toastOptions);
       }
     } catch (err) {
-      toast.error("Server error, try again", toastOptions);
+      toast.error("Server error", toastOptions);
     }
   };
 
@@ -101,49 +70,21 @@ const SetAvatar = () => {
         </div>
 
         <div className="avatarBottom">
-          {loading ? (
-            <img
-              src={spinner}
-              alt="Loading..."
-              style={{
-                width: "80px",
-                margin: "20px auto",
-                display: "block"
-              }}
-            />
-          ) : (
-            <>
-              <div className="avatarContainer">
-                {imgURL.map((img, index) => (
-                  <img
-                    key={index}
-                    src={img}
-                    alt={`avatar-${index}`}
-                    className={`avatar ${
-                      selectedAvatar === index ? "selected" : ""
-                    }`}
-                    onClick={() => setSelectedAvatar(index)}
-                  />
-                ))}
-              </div>
+          <div className="avatarContainer">
+            {avatars.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt={`avatar-${index}`}
+                className={`avatar ${selectedAvatar === index ? "selected" : ""}`}
+                onClick={() => setSelectedAvatar(index)}
+              />
+            ))}
+          </div>
 
-              <select
-                className="form-select"
-                value={selectedSprite}
-                onChange={handleSpriteChange}
-              >
-                {sprites.map((sprite, index) => (
-                  <option key={index} value={sprite}>
-                    {sprite}
-                  </option>
-                ))}
-              </select>
-
-              <Button className="primaryBtn mt-3" onClick={setProfilePicture}>
-                Set as Profile Picture
-              </Button>
-            </>
-          )}
+          <Button className="primaryBtn" onClick={setProfilePicture}>
+            Set Profile Picture
+          </Button>
         </div>
       </div>
 
