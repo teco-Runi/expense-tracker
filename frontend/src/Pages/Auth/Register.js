@@ -48,7 +48,10 @@ const Register = () => {
     try {
       setLoading(true);
 
-      const { data } = await axios.post(registerAPI, values);
+      const { data } = await axios.post(
+  "https://expense-backend-2k8h.onrender.com/api/auth/register",
+  values
+);
 
       if (data.success) {
         delete data.user.password;
