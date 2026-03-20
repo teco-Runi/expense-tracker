@@ -4,6 +4,8 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Login from './Pages/Auth/Login';
 import Register from './Pages/Auth/Register';
 // App.js
+import SetAvatar from "./Pages/Avatar/setAvatar"; // path to your file
+import "./Pages/Avatar/avatar.css"; // import CSS for styling
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './Pages/Home/Home';
 import SetAvatar from './Pages/Avatar/setAvatar';

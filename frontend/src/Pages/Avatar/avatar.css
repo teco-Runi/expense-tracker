@@ -1,93 +1,134 @@
-/* Theme Colors */
-:root{
-    --primary:#FF725E;
-    --primary-dark:#e95f4b;
+:root {
+  --primary: #FF6B35;       /* Professional orange */
+  --primary-dark: #e65a28;
+  --background: #ffffff;    /* Clean white background */
+  --card-shadow: rgba(0, 0, 0, 0.1);
 }
 
 /* Page Background */
-.avatarPage{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#f5f6fa;
+.avatarPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--background);
+  position: relative;
+  overflow: hidden;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Card (same as login/signup) */
-.avatarCard{
-    width:100%;
-    max-width:400px;
-    background:white;
-    border-radius:30px;
-    overflow:hidden;
-    box-shadow:0 15px 40px rgba(0,0,0,0.1);
+/* Card */
+.avatarCard {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px var(--card-shadow);
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.avatarCard:hover {
+  transform: translateY(-5px);
 }
 
 /* Top Section */
-.avatarTop{
-    background:linear-gradient(135deg,#FF725E,#ff9a8b);
-    padding:30px;
-    text-align:center;
-    color:white;
-}
-
-.avatarTop h1{
-    font-size:22px;
+.avatarTop {
+  background: linear-gradient(135deg, var(--primary), #ff914d);
+  padding: 30px;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
 }
 
 /* Bottom Section */
-.avatarBottom{
-    padding:25px;
-    text-align:center;
+.avatarBottom {
+  padding: 25px;
+  text-align: center;
 }
 
-/* Avatar List */
-.avatarContainer{
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    margin-bottom:20px;
+/* Avatar Container */
+.avatarContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-/* Avatar Image */
-.avatar{
-    border-radius:50%;
-    padding:5px;
-    border:2px solid transparent;
-    cursor:pointer;
-    transition:0.3s;
+/* Avatar Images */
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
-.avatar img{
-    width:60px;
-    height:60px;
+.avatar:hover {
+  transform: scale(1.1);
+  border-color: var(--primary);
 }
 
-/* Hover Effect */
-.avatar:hover{
-    transform:scale(1.1);
-    border-color:var(--primary);
+.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
 }
 
-/* Selected Avatar */
-.selected{
-    border-color:var(--primary);
-    box-shadow:0 0 10px rgba(255,114,94,0.5);
+/* Dropdown */
+.form-select {
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 100%;
+  margin-top: 20px;
+  font-size: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Button (same as login) */
-.primaryBtn{
-    width:100%;
-    background:var(--primary);
-    border:none;
-    padding:12px;
-    border-radius:10px;
-    color:white;
-    font-weight:600;
-    margin-top:10px;
-    transition:0.3s;
+.form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+  outline: none;
 }
 
-.primaryBtn:hover{
-    background:var(--primary-dark);
+/* Button */
+.primaryBtn {
+  width: 100%;
+  background: var(--primary);
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  margin-top: 15px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.primaryBtn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Spinner */
+.avatarBottom img {
+  display: block;
+  margin: 20px auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .avatarTop {
+    padding: 20px;
+  }
+  .avatar {
+    width: 60px;
+    height: 60px;
+  }
 }
