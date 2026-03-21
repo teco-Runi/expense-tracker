@@ -13,3 +13,12 @@ export const addTransaction = async (data) => {
     console.error(err);
   }
 };
+
+export const getTransactions = async () => {
+  try {
+    const res = await axios.get(`${host}/api/transactions`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
