@@ -6,37 +6,44 @@ import "./avatar.css";
 
 const SetAvatar = () => {
   const navigate = useNavigate();
+
   const [avatars, setAvatars] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // ✅ Check login
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-      navigate("/login");
-    }
-  }, []);
 
-  // ✅ Load avatars
+    if (!user) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
+
+  // ✅ Generate avatars
   useEffect(() => {
     const data = [];
+
     for (let i = 0; i < 9; i++) {
       data.push(`https://api.dicebear.com/7.x/adventurer/svg?seed=${i}`);
     }
+
     setAvatars(data);
   }, []);
 
-  // ✅ Submit
+  // ✅ Submit avatar
   const handleSubmit = async () => {
     if (selected === null) {
-      alert("Select avatar");
+      alert("Please select an avatar");
       return;
     }
 
     const user = JSON.parse(localStorage.getItem("user"));
 
     try {
-      const { data } = await axios.post(
+      setLoading(true);
+
+      const res = await axios.post(
         "https://expense-backend-2k8h.onrender.com/api/auth/setAvatar",
         {
           userId: user._id,
@@ -44,19 +51,21 @@ const SetAvatar = () => {
         }
       );
 
-      console.log("Response:", data);
-
-      if (data.isSet) {
-        user.avatarImage = data.avatarImage;
+      if (res.data.isSet) {
+        // ✅ Save in localStorage
+        user.avatarImage = res.data.avatarImage;
         localStorage.setItem("user", JSON.stringify(user));
 
-        navigate("/"); // ✅ works now
+        // ✅ Go to home
+        navigate("/", { replace: true });
       } else {
-        alert("Error setting avatar");
+        alert("Failed to set avatar");
       }
     } catch (err) {
       console.error(err);
       alert("Server error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,8 +88,12 @@ const SetAvatar = () => {
           ))}
         </div>
 
-        <Button className="primaryBtn mt-3" onClick={handleSubmit}>
-          Set Avatar
+        <Button
+          className="primaryBtn mt-3"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Set Avatar"}
         </Button>
       </div>
     </div>
