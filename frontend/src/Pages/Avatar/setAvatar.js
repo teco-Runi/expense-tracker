@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { HashRouter as Router } from "react-router-dom";
 import "./avatar.css";
 
 const SetAvatar = () => {
