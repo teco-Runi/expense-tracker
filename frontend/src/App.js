@@ -1,20 +1,93 @@
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./Pages/Auth/Login";
-import Register from "./Pages/Auth/Register";
-import Home from "./Pages/Home/Home";
-import SetAvatar from "./Pages/Avatar/setAvatar";
+import { useState, useEffect } from "react";
+import { Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./avatar.css";
 
-function App() {
+const SetAvatar = () => {
+  const navigate = useNavigate();
+  const [avatars, setAvatars] = useState([]);
+  const [selected, setSelected] = useState(null);
+
+  // ✅ Check user login (runs once)
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
+
+  // ✅ Load avatars
+  useEffect(() => {
+    const data = [];
+    for (let i = 0; i < 9; i++) {
+      data.push(`https://api.dicebear.com/7.x/adventurer/svg?seed=${i}`);
+    }
+    setAvatars(data);
+  }, []);
+
+  // ✅ Submit avatar
+  const handleSubmit = async () => {
+    if (selected === null) {
+      alert("Please select an avatar");
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    try {
+      const response = await axios.post(
+        "https://expense-backend-2k8h.onrender.com/api/auth/setAvatar",
+        {
+          userId: user._id,
+          avatarImage: avatars[selected],
+        }
+      );
+
+      console.log("API Response:", response.data);
+
+      if (response.data.isSet) {
+        // ✅ save locally
+        user.avatarImage = response.data.avatarImage;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // ✅ navigate to home
+        navigate("/");
+      } else {
+        alert("Failed to set avatar");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Server error");
+    }
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/setAvatar" element={<SetAvatar />} />
-      </Routes>
-    </Router>
-  );
-}
+    <div className="avatarPage">
+      <div className="avatarCard">
+        <h3>Choose Avatar</h3>
 
-export default App;
+        <div className="avatarGrid">
+          {avatars.map((avatar, index) => (
+            <div
+              key={index}
+              className={`avatarItem ${
+                selected === index ? "active" : ""
+              }`}
+              onClick={() => setSelected(index)}
+            >
+              <img src={avatar} alt="avatar" />
+            </div>
+          ))}
+        </div>
+
+        <Button className="primaryBtn mt-3" onClick={handleSubmit}>
+          Set Avatar
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default SetAvatar;

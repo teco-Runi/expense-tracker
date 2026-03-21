@@ -30,38 +30,42 @@ const SetAvatar = () => {
   }, []);
 
   // ✅ Submit avatar
-  const handleSubmit = async () => {
-    if (selected === null) {
-      alert("Select avatar");
-      return;
-    }
+ const handleSubmit = async () => {
+  if (selected === null) {
+    alert("Select avatar");
+    return;
+  }
 
-    const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
-    try {
-      const { data } = await axios.post(
-        "https://expense-backend-2k8h.onrender.com/api/auth/setAvatar",
-        {
-          userId: user._id,
-          avatarImage: avatars[selected],
-        }
-      );
+  try {
+    console.log("Sending request...");
 
-      console.log("Response:", data); // debug
-
-      if (data.isSet) {
-        user.avatarImage = data.avatarImage;
-        localStorage.setItem("user", JSON.stringify(user));
-
-        navigate("/"); // ✅ go to Home page
-      } else {
-        alert("Error setting avatar");
+    const { data } = await axios.post(
+      "https://expense-backend-2k8h.onrender.com/api/auth/setAvatar",
+      {
+        userId: user._id,
+        avatarImage: avatars[selected],
       }
-    } catch (err) {
-      console.error(err);
-      alert("Server error, try again");
+    );
+
+    console.log("Response:", data); // 👈 CHECK THIS
+
+    if (data.isSet) {
+      console.log("Saving avatar & navigating...");
+
+      user.avatarImage = data.avatarImage;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      navigate("/"); // 👈 SHOULD RUN
+    } else {
+      alert("Error setting avatar");
     }
-  };
+  } catch (err) {
+    console.error("ERROR:", err);
+    alert("Server error");
+  }
+};
 
   return (
     <div className="avatarPage">
