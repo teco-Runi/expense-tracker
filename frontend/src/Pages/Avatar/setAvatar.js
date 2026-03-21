@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import "./avatar.css";
 
 const SetAvatar = () => {
@@ -9,20 +9,16 @@ const SetAvatar = () => {
   const [avatars, setAvatars] = useState([]);
   const [selected, setSelected] = useState(null);
 
-  // ✅ Redirect logic
+  // ✅ Check login only (NO LOOP)
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
       navigate("/login");
     }
+  }, []);
 
-    if (user?.avatarImage) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  // ✅ NO API CALL → NO CORS
+  // ✅ Generate avatars
   useEffect(() => {
     const data = [];
 
@@ -33,32 +29,39 @@ const SetAvatar = () => {
     setAvatars(data);
   }, []);
 
+  // ✅ Submit avatar
   const handleSubmit = async () => {
-  if (selected === null) return alert("Select avatar");
-
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  try {
-    const { data } = await axios.post(
-      "https://expense-backend-2k8h.onrender.com/api/auth/setAvatar", // <-- update to your backend URL
-      {
-        userId: user._id,
-        avatarImage: avatars[selected],
-      }
-    );
-
-    if (data.isSet) {
-      user.avatarImage = data.avatarImage;
-      localStorage.setItem("user", JSON.stringify(user));
-      navigate("/"); // go to homepage
-    } else {
-      alert("Error setting avatar");
+    if (selected === null) {
+      alert("Select avatar");
+      return;
     }
-  } catch (err) {
-    console.error(err);
-    alert("Server error, try again");
-  }
-};
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    try {
+      const { data } = await axios.post(
+        "https://expense-backend-2k8h.onrender.com/api/auth/setAvatar",
+        {
+          userId: user._id,
+          avatarImage: avatars[selected],
+        }
+      );
+
+      console.log("Response:", data); // debug
+
+      if (data.isSet) {
+        user.avatarImage = data.avatarImage;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        navigate("/"); // ✅ go to Home page
+      } else {
+        alert("Error setting avatar");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error, try again");
+    }
+  };
 
   return (
     <div className="avatarPage">
