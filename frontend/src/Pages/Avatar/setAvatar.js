@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./avatar.css";
 
 const SetAvatar = () => {
@@ -9,30 +8,45 @@ const SetAvatar = () => {
   const [avatars, setAvatars] = useState([]);
   const [selected, setSelected] = useState(null);
 
+  // ✅ Redirect logic
   useEffect(() => {
-    const fetchAvatars = async () => {
-      const data = [];
-      for (let i = 0; i < 9; i++) {
-        const res = await axios.get(
-          `https://api.multiavatar.com/${Math.round(Math.random() * 1000)}`
-        );
-        data.push(res.data);
-      }
-      setAvatars(data);
-    };
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    fetchAvatars();
+    if (!user) {
+      navigate("/login");
+    }
+
+    if (user?.avatarImage) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  // ✅ NO API CALL → NO CORS
+  useEffect(() => {
+    const data = [];
+
+    for (let i = 0; i < 9; i++) {
+      data.push(`https://api.dicebear.com/7.x/adventurer/svg?seed=${i}`);
+    }
+
+    setAvatars(data);
   }, []);
 
   const handleSubmit = () => {
-    if (selected === null) return alert("Please select an avatar");
+    if (selected === null) return alert("Select avatar");
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    user.avatarImage = avatars[selected];
+
+    localStorage.setItem("user", JSON.stringify(user));
+
     navigate("/");
   };
 
   return (
     <div className="avatarPage">
       <div className="avatarCard">
-        <h3 className="title">Choose Your Avatar</h3>
+        <h3>Choose Avatar</h3>
 
         <div className="avatarGrid">
           {avatars.map((avatar, index) => (
@@ -40,8 +54,9 @@ const SetAvatar = () => {
               key={index}
               className={`avatarItem ${selected === index ? "active" : ""}`}
               onClick={() => setSelected(index)}
-              dangerouslySetInnerHTML={{ __html: avatar }}
-            />
+            >
+              <img src={avatar} alt="avatar" />
+            </div>
           ))}
         </div>
 
