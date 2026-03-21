@@ -1,4 +1,12 @@
-import User from "../models/User.js"; // make sure your User model is correct
+import User from "../models/UserSchema.js"; // Make sure the filename matches exactly
+
+export const registerControllers = async (req, res) => {
+  // Add your register logic here
+};
+
+export const loginControllers = async (req, res) => {
+  // Add your login logic here
+};
 
 export const setAvatarController = async (req, res) => {
   try {
