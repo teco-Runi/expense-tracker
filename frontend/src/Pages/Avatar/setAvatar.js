@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import "./avatar.css";
 
 const SetAvatar = () => {
@@ -32,16 +33,32 @@ const SetAvatar = () => {
     setAvatars(data);
   }, []);
 
-  const handleSubmit = () => {
-    if (selected === null) return alert("Select avatar");
+  const handleSubmit = async () => {
+  if (selected === null) return alert("Select avatar");
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    user.avatarImage = avatars[selected];
+  const user = JSON.parse(localStorage.getItem("user"));
 
-    localStorage.setItem("user", JSON.stringify(user));
+  try {
+    const { data } = await axios.post(
+      "https://expense-backend-2k8h.onrender.com/api/auth/setAvatar", // <-- update to your backend URL
+      {
+        userId: user._id,
+        avatarImage: avatars[selected],
+      }
+    );
 
-    navigate("/");
-  };
+    if (data.isSet) {
+      user.avatarImage = data.avatarImage;
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate("/"); // go to homepage
+    } else {
+      alert("Error setting avatar");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Server error, try again");
+  }
+};
 
   return (
     <div className="avatarPage">

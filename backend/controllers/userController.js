@@ -1,46 +1,22 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
+import User from "../models/User.js"; // make sure your User model is correct
 
-// REGISTER
-export const registerControllers = async (req, res) => {
+export const setAvatarController = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) return res.status(400).json({ success: false, message: "All fields required" });
+    const { userId, avatarImage } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ success: false, message: "Email already exists" });
+    if (!userId || !avatarImage) {
+      return res.status(400).json({ msg: "All fields are required" });
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ msg: "User not found" });
 
-    const newUser = await User.create({ name, email, password: hashedPassword });
-    const userToReturn = { ...newUser._doc };
-    delete userToReturn.password;
+    user.avatarImage = avatarImage;
+    await user.save();
 
-    res.status(201).json({ success: true, message: "User registered successfully", user: userToReturn });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-// LOGIN
-export const loginControllers = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ success: false, message: "All fields required" });
-
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ success: false, message: "Invalid credentials" });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ success: false, message: "Invalid credentials" });
-
-    const userToReturn = { ...user._doc };
-    delete userToReturn.password;
-
-    res.status(200).json({ success: true, message: "Login successful", user: userToReturn });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res.json({ isSet: true, avatarImage: user.avatarImage });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: "Internal server error" });
   }
 };
