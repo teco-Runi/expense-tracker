@@ -3,6 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import "./auth.css"
 import { registerAPI } from "../../utils/ApiRequest";
 import "react-toastify/dist/ReactToastify.css";
 
