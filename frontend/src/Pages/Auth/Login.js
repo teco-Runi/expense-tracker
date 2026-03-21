@@ -13,12 +13,22 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [values, setValues] = useState({ email: "", password: "" });
 
+  // ✅ Proper redirect logic
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) navigate("/setAvatar");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user?.avatarImage) {
+      navigate("/");
+    } else if (user) {
+      navigate("/setAvatar");
+    }
   }, [navigate]);
 
-  const toastOptions = { position: "bottom-right", autoClose: 2000, theme: "dark" };
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 2000,
+    theme: "dark",
+  };
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -27,8 +37,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!values.email || !values.password)
+    if (!values.email || !values.password) {
       return toast.error("All fields are required", toastOptions);
+    }
 
     try {
       setLoading(true);
@@ -37,7 +48,7 @@ const Login = () => {
       if (data.success) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success(data.message, toastOptions);
-        navigate("/setAvatar");   // ✅ FIX
+        navigate("/setAvatar"); // ✅ redirect
       } else {
         toast.error(data.message, toastOptions);
       }
@@ -64,16 +75,30 @@ const Login = () => {
             <h5 className="text-center mb-3">Welcome Back</h5>
 
             <Form onSubmit={handleSubmit}>
-              <Form.Control className="inputField" name="email" placeholder="Email" onChange={handleChange} />
-              <Form.Control className="inputField" type="password" name="password" placeholder="Password" onChange={handleChange} />
+              <Form.Control
+                className="inputField"
+                name="email"
+                placeholder="Email"
+                onChange={handleChange}
+              />
+              <Form.Control
+                className="inputField"
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+              />
 
-              <Button className="primaryBtn" disabled={loading}>
+              <Button type="submit" className="primaryBtn" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
               </Button>
             </Form>
 
             <p className="text-center mt-3">
-              Don't have an account? <Link to="/register" className="lnk">Register</Link>
+              Don't have an account?{" "}
+              <Link to="/register" className="lnk">
+                Register
+              </Link>
             </p>
           </div>
         </div>
