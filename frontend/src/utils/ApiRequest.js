@@ -1,24 +1,8 @@
-import axios from "axios";
-
 const host = process.env.REACT_APP_BACKEND_URL;
-
+export const setAvatarAPI = `${host}/api/auth/setAvatar`;
 export const registerAPI = `${host}/api/auth/register`;
 export const loginAPI = `${host}/api/auth/login`;
-
-export const addTransaction = async (data) => {
-  try {
-    const res = await axios.post(`${host}/api/transactions`, data);
-    return res.data;
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-export const getTransactions = async () => {
-  try {
-    const res = await axios.get(`${host}/api/transactions`);
-    return res.data;
-  } catch (err) {
-    console.error(err);
-  }
-};
+export const addTransaction = `${host}/api/v1/addTransaction`;
+export const getTransactions = `${host}/api/v1/getTransaction`;
+export const editTransactions = `${host}/api/v1/updateTransaction`;
+export const deleteTransactions = `${host}/api/v1/deleteTransaction`;
