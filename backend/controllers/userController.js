@@ -1,31 +1,18 @@
-import User from "../models/User.js"; // your Mongoose user model
+import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
-// REGISTER CONTROLLER
+// REGISTER
 export const registerControllers = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ success: false, message: "All fields required" });
 
-    // Validation
-    if (!name || !email || !password)
-      return res.status(400).json({ success: false, message: "All fields are required" });
-
-    // Check if user exists
     const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ success: false, message: "Email already exists" });
+    if (existingUser) return res.status(400).json({ success: false, message: "Email already exists" });
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-    });
-
+    const newUser = await User.create({ name, email, password: hashedPassword });
     const userToReturn = { ...newUser._doc };
     delete userToReturn.password;
 
@@ -36,13 +23,11 @@ export const registerControllers = async (req, res) => {
   }
 };
 
-// LOGIN CONTROLLER
+// LOGIN
 export const loginControllers = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password)
-      return res.status(400).json({ success: false, message: "All fields are required" });
+    if (!email || !password) return res.status(400).json({ success: false, message: "All fields required" });
 
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ success: false, message: "Invalid credentials" });

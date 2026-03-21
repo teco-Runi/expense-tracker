@@ -1,30 +1,18 @@
-import React from 'react';
-import "./App.css";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from './Pages/Auth/Login';
-import Register from './Pages/Auth/Register';
-// App.js
-import SetAvatar from "./Pages/Avatar/setAvatar"; // path to your file
-import "./Pages/Avatar/avatar.css"; // import CSS for styling
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Home from './Pages/Home/Home';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./Pages/Auth/Login";
+import Register from "./Pages/Auth/Register";
+import Home from "./Pages/Home";
 
-
-
-const App = () => {
+function App() {
   return (
-    
-      <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/setAvatar" element={<SetAvatar />} />
-        </Routes>
-      </BrowserRouter>
-      </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
