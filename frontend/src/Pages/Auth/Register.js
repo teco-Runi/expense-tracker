@@ -26,7 +26,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("Form submitted");
     if (!values.name || !values.email || !values.password)
       return toast.error("All fields required", toastOptions);
 
@@ -71,7 +71,7 @@ const Register = () => {
               <Form.Control className="inputField" name="email" placeholder="Email" onChange={handleChange} />
               <Form.Control className="inputField" type="password" name="password" placeholder="Password" onChange={handleChange} />
 
-              <Button className="primaryBtn" disabled={loading}>
+              <Button type="submit" className="primaryBtn" disabled={loading}>
                 {loading ? "Creating..." : "Sign Up"}
               </Button>
             </Form>
