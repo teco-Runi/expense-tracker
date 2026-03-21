@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import logo from "../../assets/expensely-logo.svg";
 import { loginAPI } from "../../utils/ApiRequest";
@@ -14,7 +14,8 @@ const Login = () => {
   const [values, setValues] = useState({ email: "", password: "" });
 
   useEffect(() => {
-    if (localStorage.getItem("user")) navigate("/"); // redirect if already logged in
+    const user = localStorage.getItem("user");
+    if (user) navigate("/setAvatar");
   }, [navigate]);
 
   const toastOptions = { position: "bottom-right", autoClose: 2000, theme: "dark" };
@@ -25,7 +26,9 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!values.email || !values.password) return toast.error("All fields are required", toastOptions);
+
+    if (!values.email || !values.password)
+      return toast.error("All fields are required", toastOptions);
 
     try {
       setLoading(true);
@@ -34,11 +37,11 @@ const Login = () => {
       if (data.success) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success(data.message, toastOptions);
-        navigate("/"); // redirect to homepage
+        navigate("/setAvatar");   // ✅ FIX
       } else {
         toast.error(data.message, toastOptions);
       }
-    } catch (error) {
+    } catch {
       toast.error("Server error", toastOptions);
     } finally {
       setLoading(false);
@@ -56,38 +59,26 @@ const Login = () => {
             </div>
             <p className="tagline">Track your expenses easily</p>
           </div>
+
           <div className="cardBottom">
             <h5 className="text-center mb-3">Welcome Back</h5>
+
             <Form onSubmit={handleSubmit}>
-              <Form.Control
-                className="inputField"
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={values.email}
-                onChange={handleChange}
-              />
-              <Form.Control
-                className="inputField"
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={values.password}
-                onChange={handleChange}
-              />
+              <Form.Control className="inputField" name="email" placeholder="Email" onChange={handleChange} />
+              <Form.Control className="inputField" type="password" name="password" placeholder="Password" onChange={handleChange} />
+
               <Button className="primaryBtn" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
               </Button>
             </Form>
+
             <p className="text-center mt-3">
-              <Link to="/forgotPassword" className="lnk">Forgot Password?</Link>
-            </p>
-            <p className="text-center">
               Don't have an account? <Link to="/register" className="lnk">Register</Link>
             </p>
           </div>
         </div>
       </div>
+
       <ToastContainer />
     </div>
   );

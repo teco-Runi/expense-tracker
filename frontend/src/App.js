@@ -2,6 +2,7 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Pages/Auth/Login";
 import Register from "./Pages/Auth/Register";
 import Home from "./Pages/Home/Home";
+import SetAvatar from "./Pages/Avatar/setAvatar";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/setAvatar" element={<SetAvatar />} />
       </Routes>
     </Router>
   );
